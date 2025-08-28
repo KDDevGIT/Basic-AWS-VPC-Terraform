@@ -25,4 +25,8 @@ output "private_route_table_id" {
     value = module.vpc.private_route_table_id
 }
 
+# NAT Gateway ID
+output "nat_gateway_ids" {
+    value = module.vpc.nat_gateway_ids
+}
 
