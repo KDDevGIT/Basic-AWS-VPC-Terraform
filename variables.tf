@@ -24,3 +24,15 @@ variable "azs" {
     type = list(string)
 }
 
+# Public Subnet CIDRs
+variable "public_subnet_cidrs" {
+    description = "CIDRs for public subnets (One per Avail. Zone)"
+    type = list(string)
+}
+
+# Private Subnet CIDRs
+variable "private_subnet_cidrs" {
+    description = "CIDRs for private subnets (One per Avail. Zone)"
+    type = list(string)
+}
+
