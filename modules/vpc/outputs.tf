@@ -28,4 +28,8 @@ output "private_route_table_ids" {
     )
 }
 
+# NAT Gateway IDs
+output "nat_gateway_ids" {
+    value = [for i in aws_nat_gateway.this : i.id]
+}
 
