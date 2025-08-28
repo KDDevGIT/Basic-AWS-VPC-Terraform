@@ -26,14 +26,33 @@ resource "aws_internet_gateway" "this" {
     tags = merge(var.tags, { Name = "${var.name}-igw" })
 }
 
-# AWS Subnet Resource
-resource "aws_subnet" "this" {
+# AWS Public Subnet Resource
+resource "aws_subnet" "public" {
     for_each = local.pub_map
 
     vpc_id = aws_vpc.this.id
     cidr_block = each.value.cidr
     availability_zone = each.value.az
     map_public_ip_on_launch = true
+
+    tags = merge(var.tags, {
+        Name = "${var.name}-public-${each.key}"
+        Tier = "public"
+    })
+}
+
+# AWS Private Subnet Resource
+resource "aws_subnet" "private" {
+    for_each = local.priv_map
+
+    vpc_id = aws_vpc.this.id
+    cidr_block = each.value.cidr
+    availability_zone = each.value.az
+
+    tags = merge(var.tags, {
+        Name = "${var.name}-private-${each.key}"
+        Tier = "private"
+    })
 }
 
 
