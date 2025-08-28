@@ -83,12 +83,18 @@ locals {
 
 # AWS Elastic IP for NAT Gateway
 resource "aws_eip" "nat" {
-    count = var.enable_nat_gateway ? (var.single_nat_gateway ? 1 : length(local.public_subnet_ids_ordered)) : 0
-    allocation_id = aws_eip.nat[count.index].id
-    subnet_id = local.public_subnet_ids_ordered[var.single_nat_gateway ? 0 : count.index]
-    tags = merge(var.tags, { Name = "${var.name}-nat-${count.index}" })
-    
-    depends_on = [ aws_internet_gateway.this ]
+  count  = var.enable_nat_gateway ? (var.single_nat_gateway ? 1 : length(local.public_subnet_ids_ordered)) : 0
+  domain = "vpc"  # Required for VPC-attached EIPs
+  tags   = merge(var.tags, { Name = "${var.name}-nat-eip-${count.index}" })
+}
+
+# Create NAT Gateway(s) in public subnet(s) using EIPs
+resource "aws_nat_gateway" "this" {
+  count         = var.enable_nat_gateway ? (var.single_nat_gateway ? 1 : length(local.public_subnet_ids_ordered)) : 0
+  allocation_id = aws_eip.nat[count.index].id
+  subnet_id     = local.public_subnet_ids_ordered[var.single_nat_gateway ? 0 : count.index]
+  tags = merge(var.tags, { Name = "${var.name}-nat-${count.index}" })
+  depends_on = [aws_internet_gateway.this]
 }
 
 # Single NAT Mode 
