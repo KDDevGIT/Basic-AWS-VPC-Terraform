@@ -26,4 +26,14 @@ resource "aws_internet_gateway" "this" {
     tags = merge(var.tags, { Name = "${var.name}-igw" })
 }
 
+# AWS Subnet Resource
+resource "aws_subnet" "this" {
+    for_each = local.pub_map
+
+    vpc_id = aws_vpc.this.id
+    cidr_block = each.value.cidr
+    availability_zone = each.value.az
+    map_public_ip_on_launch = true
+}
+
 
