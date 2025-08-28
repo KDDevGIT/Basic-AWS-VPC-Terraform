@@ -91,6 +91,33 @@ resource "aws_eip" "nat" {
     depends_on = [ aws_internet_gateway.this ]
 }
 
+# Single NAT Mode 
+# Creates exactly 1 private Route Table when NAT enabled AND Using single NAT
+resource "aws_route_table" "private_single" {
+    count = var.enable_nat_gateway && var.single_nat_gateway ? 1 : 0
+    vpc_id = aws_vpc.this.id
+    tags = merge(var.tags, { Name = "${var.name}-private-rt" })
+}
+
+# Add Default Route to Private Route Table
+resource "aws_route" "private_single_default" {
+    count = length(aws_route_table.private_single)
+    route_table_id = aws_route_table.private_single[0].id
+    # Default Route (Outbound)
+    destination_cidr_block = "0.0.0.0/0"
+    # Point default route to single NAT in public subnet
+    nat_gateway_id = aws_nat_gateway.this[0].id
+}
+
+# Associate every private subnet to single private route table
+resource "aws_route_table_association" "private_single_assoc" {
+    for_each = var.enable_nat_gateway && var.single_nat_gateway ? aws_subnet.private : {}
+    subnet_id = each.value.id
+    route_table_id = aws_route_table.private_single[0].id
+}
+
+
+# Per Avail. Zone NAT Mode
 
 
 
