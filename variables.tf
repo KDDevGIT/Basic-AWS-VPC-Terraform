@@ -50,6 +50,14 @@ variable "single_nat_gateway" {
     default = true
 }
 
+# Tags
+variable "tags" {
+    description = "Common Tags"
+    type = map(string)
+    default = {}
+}
+
+
 
 
 
