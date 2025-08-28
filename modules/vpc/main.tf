@@ -116,8 +116,28 @@ resource "aws_route_table_association" "private_single_assoc" {
     route_table_id = aws_route_table.private_single[0].id
 }
 
-
 # Per Avail. Zone NAT Mode
+# One private Route Table per Private Subnet/Avail. Zone
+resource "aws_route_table" "private_per_az" {
+    for_each = var.enable_nat_gateway && !var.single_nat_gateway ? aws_subnet.private : {}
+    vpc_id = aws_vpc.this.id
+    tags = merge(var.tags, { Name = "${var.name}-private-rt-${each.key}" })
+}
+
+# Default route per Avail. Zone Route Tables
+resource "aws_route" "private_per_az_default" {
+    for_each = var.enable_nat_gateway && !var.single_nat_gateway ? aws_route_table.private_per_az : {}
+    route_table_id = each.value.id
+    destination_cidr_block = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.this[tonumber(each.key)].id
+}
+
+# Associate private subnet with its matching Per Avail. Zone Route Table
+resource "aws_route_table_association" "private_per_az_assoc" {
+    for_each = var.enable_nat_gateway && !var.single_nat_gateway ? aws_subnet.private : {}
+    subnet_id = each.value.id
+    route_table_id = aws_route_table.private_per_az[each.key].id
+}
 
 
 
