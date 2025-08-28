@@ -55,4 +55,26 @@ resource "aws_subnet" "private" {
     })
 }
 
+# AWS Route Table Resource
+resource "aws_route_table" "public" {
+    vpc_id = aws_vpc.this.id
+    tags = merge(var.tags, { Name = "${var.name}-public-rt" })
+}
+
+# AWS Public Default Route Resource
+resource "aws_route" "public_default" {
+    route_table_id = aws_route_table.public.id
+    destination_cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.this.id
+}
+
+# AWS Route Table Association Resource
+resource "aws_route_table_association" "public" {
+    for_each = aws_subnet.public
+    subnet_id = each.value.id
+    route_table_id = aws_route_table.public.id
+}
+
+
+
 
