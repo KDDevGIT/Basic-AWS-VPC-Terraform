@@ -36,3 +36,21 @@ variable "private_subnet_cidrs" {
     type = list(string)
 }
 
+# Enable/Create NAT Gateway (Private Subnet)
+variable "enable_nat_gateway" {
+    description = "Create NAT Gateway(s) for private subnets"
+    type = bool
+    default = true
+}
+
+# Single NAT Gateway (Public Subnet)
+variable "single_nat_gateway" {
+    description = "Use single NAT in first public subnet"
+    type = bool
+    default = true
+}
+
+
+
+
+
