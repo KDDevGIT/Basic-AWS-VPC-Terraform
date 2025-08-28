@@ -18,3 +18,9 @@ variable "cidr_block" {
     default = "10.0.0.0/16"
 }
 
+# Availability Zones
+variable "azs" {
+    description = "List of Availability Zones"
+    type = list(string)
+}
+
