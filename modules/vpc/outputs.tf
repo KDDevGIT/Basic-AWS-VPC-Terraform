@@ -15,3 +15,17 @@ output "private_subnet_ids" {
     value = local.private_subnet_ids_ordered
 }
 
+# Public Route Table ID
+output "public_route_table_id" {
+    value = aws_route_table.public.id
+}
+
+# Private Route Table ID(s)
+output "private_route_table_ids" {
+    value = concat(
+        [for r in aws_route_table.private_single : r.id],
+        [for k in sort(keys(aws_route_table.private_per_az)) : aws_route_table.private_per_az[k].id]
+    )
+}
+
+
