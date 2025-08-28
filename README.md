@@ -11,7 +11,6 @@ Custom VPC with DNS support enabled. Public and private subnets across multiple 
 
 
 ## Deployment
-### (Optional) Authenticate AWS first (env vars or profile)
 - export AWS_PROFILE=default
 - export AWS_REGION=us-east-1
 
