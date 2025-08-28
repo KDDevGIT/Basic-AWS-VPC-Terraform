@@ -4,3 +4,9 @@ variable "aws_region" {
     type = string
 }
 
+# Name
+variable "name" {
+    description = "Base name for resources"
+    type = string
+    default = "basic-vpc"
+}
