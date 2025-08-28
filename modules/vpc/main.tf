@@ -75,6 +75,14 @@ resource "aws_route_table_association" "public" {
     route_table_id = aws_route_table.public.id
 }
 
+# Local Resources for Public and Private ordered subnet IDs
+locals {
+    public_subnet_ids_ordered = [for k in sort(keys(aws_subnet.public)) : aws_subnet.public[k].id]
+    private_subnet_ids_ordered = [for k in sort(keys(aws_subnet.private)) : aws_subnet.private[k].id]
+}
+
+
+
 
 
 
